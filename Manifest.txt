@@ -1,0 +1,9 @@
+.autotest
+CHANGELOG.rdoc
+Manifest.txt
+README.rdoc
+Rakefile
+ext/stree/extconf.rb
+ext/stree/stree.c
+lib/stree.rb
+test/test_stree.rb
