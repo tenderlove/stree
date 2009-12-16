@@ -5,5 +5,9 @@ README.rdoc
 Rakefile
 ext/stree/extconf.rb
 ext/stree/stree.c
+ext/stree/stree.h
+ext/stree/stree_string.c
+ext/stree/stree_string.h
 lib/stree.rb
 test/test_stree.rb
+test/test_string.rb
