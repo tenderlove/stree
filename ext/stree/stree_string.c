@@ -2,8 +2,9 @@
 
 VALUE cStreeString;
 
-static void dealloc(LST_String * ptr)
+static void dealloc(void * ptr)
 {
+  lst_string_free((LST_String *)ptr);
 }
 
 static VALUE allocate(VALUE klass)
@@ -17,7 +18,7 @@ static VALUE initialize(VALUE self, VALUE string)
   LST_String * ptr;
 
   Data_Get_Struct(self, LST_String, ptr);
-  lst_string_init(ptr, StringValuePtr(string), 1, RSTRING_LEN(string));
+  lst_string_init(ptr, StringValuePtr(string), sizeof(char), RSTRING_LEN(string));
 
   return self;
 }
@@ -30,6 +31,22 @@ static VALUE bytesize(VALUE self)
   return INT2NUM(lst_string_get_length(ptr));
 }
 
+static VALUE get(VALUE self, VALUE index)
+{
+  LST_String * ptr;
+
+  Data_Get_Struct(self, LST_String, ptr);
+
+  void * item = lst_string_get_item(ptr, NUM2INT(index));
+
+  if(NULL == item) return Qnil;
+
+  char * c = ((char *)item)[0];
+
+  if(c) return INT2NUM(((char *)item)[0]);
+  return Qnil;
+}
+
 void Init_stree_string()
 {
   cStreeString = rb_define_class_under(cStree, "String", rb_cObject);
@@ -37,4 +54,5 @@ void Init_stree_string()
 
   rb_define_method(cStreeString, "initialize", initialize, 1);
   rb_define_method(cStreeString, "bytesize", bytesize, 0);
+  rb_define_method(cStreeString, "[]", get, 1);
 }
