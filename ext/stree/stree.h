@@ -3,6 +3,7 @@
 
 #include <ruby.h>
 #include <stree_string.h>
+#include <stree_stringset.h>
 
 #include <stree/lst_string.h>
 

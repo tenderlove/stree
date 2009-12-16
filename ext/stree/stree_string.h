@@ -5,4 +5,6 @@
 
 void Init_stree_string();
 
+extern VALUE cStreeString;
+
 #endif

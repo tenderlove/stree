@@ -8,6 +8,10 @@ ext/stree/stree.c
 ext/stree/stree.h
 ext/stree/stree_string.c
 ext/stree/stree_string.h
+ext/stree/stree_stringset.c
+ext/stree/stree_stringset.h
 lib/stree.rb
+lib/stree/string_set.rb
 test/test_stree.rb
 test/test_string.rb
+test/test_string_set.rb
