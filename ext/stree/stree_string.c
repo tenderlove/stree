@@ -47,6 +47,14 @@ static VALUE get(VALUE self, VALUE index)
   return Qnil;
 }
 
+static VALUE to_s(VALUE self)
+{
+  LST_String * ptr;
+
+  Data_Get_Struct(self, LST_String, ptr);
+  return rb_str_new2(lst_string_print(ptr));
+}
+
 void Init_stree_string()
 {
   cStreeString = rb_define_class_under(cStree, "String", rb_cObject);
@@ -55,4 +63,5 @@ void Init_stree_string()
   rb_define_method(cStreeString, "initialize", initialize, 1);
   rb_define_method(cStreeString, "bytesize", bytesize, 0);
   rb_define_method(cStreeString, "[]", get, 1);
+  rb_define_method(cStreeString, "to_s", to_s, 0);
 }

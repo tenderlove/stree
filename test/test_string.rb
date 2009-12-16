@@ -20,5 +20,10 @@ class Stree
         end
       end
     end
+
+    def test_to_s
+      sstr = Stree::String.new("foo")
+      assert_equal 'foo', sstr.to_s
+    end
   end
 end
