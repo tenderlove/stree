@@ -51,6 +51,5 @@ void Init_stree()
   rb_define_method(cStree, "push", push, 1);
   rb_define_method(cStree, "longest_common_substr", longest_common_substr, 2);
 
-  Init_stree_string();
   Init_stree_stringset();
 }
