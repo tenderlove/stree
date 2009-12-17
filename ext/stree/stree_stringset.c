@@ -15,6 +15,13 @@ static VALUE allocate(VALUE klass)
   return Data_Wrap_Struct(klass, NULL, dealloc, ss);
 }
 
+VALUE Stree_Wrap_StringSet(LST_StringSet * set)
+{
+  VALUE ss = Data_Wrap_Struct(cStreeStringSet, NULL, dealloc, set);
+  rb_obj_call_init(ss, 0, NULL);
+  return ss;
+}
+
 static VALUE push(VALUE self, VALUE sstring)
 {
   if(cStreeString != rb_obj_class(sstring))
@@ -69,10 +76,13 @@ static void each_cb(LST_String * string, void * ctx)
   VALUE weakrefs = rb_iv_get(self, "@weak_refs");
   VALUE key = INT2NUM((int)string);
   VALUE value = rb_hash_aref(weakrefs, key);
+
+  // If this wasn't in a weak ref table, we'll assume that some other Ruby
+  // object created it and is in charge of freeing it's memory.
   if(NIL_P(value))
-    rb_raise(rb_eRuntimeError, "fixme!");
-  else
-    rb_yield(value);
+    value = Data_Wrap_Struct(cStreeString, NULL, NULL, string);
+
+  rb_yield(value);
 }
 
 static VALUE each(VALUE self)
@@ -91,7 +101,6 @@ void Init_stree_stringset()
 
   rb_define_method(cStreeStringSet, "push", push, 1);
   rb_define_method(cStreeStringSet, "length", length, 0);
-  rb_define_method(cStreeStringSet, "push", push, 1);
   rb_define_method(cStreeStringSet, "delete", delete, 1);
   rb_define_method(cStreeStringSet, "each", each, 0);
 }

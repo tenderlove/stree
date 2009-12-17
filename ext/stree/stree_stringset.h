@@ -4,5 +4,6 @@
 #include <stree.h>
 
 void Init_stree_stringset();
+VALUE Stree_Wrap_StringSet(LST_StringSet * set);
 
 #endif
