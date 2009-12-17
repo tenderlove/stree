@@ -5,8 +5,7 @@ VALUE cStreeStringSet;
 static void dealloc(void *ptr)
 {
   LST_StringSet *set = (LST_StringSet *)ptr;
-
-  free(set);
+  lst_stringset_free(set);
 }
 
 static VALUE allocate(VALUE klass)
@@ -22,23 +21,16 @@ VALUE Stree_Wrap_StringSet(LST_StringSet * set)
   return ss;
 }
 
-static VALUE push(VALUE self, VALUE sstring)
+static VALUE push(VALUE self, VALUE string)
 {
-  if(cStreeString != rb_obj_class(sstring))
-    rb_raise(rb_eArgError, "must be of type Stree::String");
+  LST_String * string_p = lst_string_new(
+      StringValuePtr(string), sizeof(char), RSTRING_LEN(string));
 
-  VALUE weakrefs = rb_iv_get(self, "@weak_refs");
-
-  LST_String * sstring_p;
   LST_StringSet * ss;
 
-  Data_Get_Struct(sstring, LST_String, sstring_p);
   Data_Get_Struct(self, LST_StringSet, ss);
 
-  VALUE key = INT2NUM((int)sstring_p);
-  rb_hash_aset(weakrefs, key, sstring);
-
-  lst_stringset_add(ss, sstring_p);
+  lst_stringset_add(ss, string_p);
 
   return self;
 }
@@ -51,38 +43,29 @@ static VALUE length(VALUE self)
   return INT2NUM(ss->size);
 }
 
-static VALUE delete(VALUE self, VALUE obj)
+static VALUE delete(VALUE self, VALUE string)
 {
-  if(cStreeString != rb_obj_class(obj))
-    rb_raise(rb_eArgError, "must be of type Stree::String");
-
-  LST_String * sstring_p;
   LST_StringSet * ss;
+  LST_String  * ss_string;
 
-  Data_Get_Struct(obj, LST_String, sstring_p);
   Data_Get_Struct(self, LST_StringSet, ss);
 
-  int before = ss->size;
-  lst_stringset_remove(ss, sstring_p);
+  for(ss_string = ss->members.lh_first; ss_string; ss_string = ss_string->set.le_next)
+  {
+    VALUE tmp_string = rb_str_new2(lst_string_print(ss_string));
+    if(Qtrue == rb_funcall(string, rb_intern("=="), 1, tmp_string)) {
+      LIST_REMOVE(ss_string, set);
+      ss->size--;
+      return string;
+    }
+  }
 
-  if(ss->size != before) return obj;
   return Qnil;
 }
 
 static void each_cb(LST_String * string, void * ctx)
 {
-  VALUE self = (VALUE)ctx;
-
-  VALUE weakrefs = rb_iv_get(self, "@weak_refs");
-  VALUE key = INT2NUM((int)string);
-  VALUE value = rb_hash_aref(weakrefs, key);
-
-  // If this wasn't in a weak ref table, we'll assume that some other Ruby
-  // object created it and is in charge of freeing it's memory.
-  if(NIL_P(value))
-    value = Data_Wrap_Struct(cStreeString, NULL, NULL, string);
-
-  rb_yield(value);
+  rb_yield(rb_str_new2(lst_string_print(string)));
 }
 
 static VALUE each(VALUE self)

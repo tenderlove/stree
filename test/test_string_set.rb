@@ -8,18 +8,18 @@ class Stree
     end
 
     def test_push_arg_error
-      assert_raises(ArgumentError) do
+      assert_raises(TypeError) do
         @ss << Object.new
       end
     end
 
     def test_push
-      @ss << Stree::String.new('foo')
+      @ss << 'foo'
       assert_equal 1, @ss.length
     end
 
     def test_delete
-      foo = Stree::String.new('foo')
+      foo = 'foo'
       @ss << foo
 
       assert_equal 1, @ss.length
@@ -27,18 +27,12 @@ class Stree
     end
 
     def test_delete_not_there
-      foo = Stree::String.new('foo')
+      foo = 'foo'
       assert_nil @ss.delete(foo)
     end
 
-    def test_delete_arg_error
-      assert_raises(ArgumentError) do
-        @ss.delete Object.new
-      end
-    end
-
     def test_each
-      foo = Stree::String.new('foo')
+      foo = 'foo'
       @ss << foo
       list = []
       @ss.each do |thing|

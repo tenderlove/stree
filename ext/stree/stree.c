@@ -20,13 +20,11 @@ static VALUE allocate(VALUE klass)
 static VALUE push(VALUE self, VALUE o)
 {
   LST_STree * tree;
-  LST_String * string;
-
-  if(cStreeString != rb_obj_class(o))
-    rb_raise(rb_eArgError, "must be of type Stree::String");
 
   Data_Get_Struct(self, LST_STree, tree);
-  Data_Get_Struct(o, LST_String, string);
+
+  LST_String * string = lst_string_new(
+      StringValuePtr(o), sizeof(char), RSTRING_LEN(o));
 
   lst_stree_add_string(tree, string);
 
