@@ -10,12 +10,6 @@ class TestStree < Test::Unit::TestCase
     assert Stree.new
   end
 
-  def test_push_argerror
-    assert_raises(TypeError) do
-      @tree.push Object.new
-    end
-  end
-
   def test_push
     @tree.push 'foo'
   end
