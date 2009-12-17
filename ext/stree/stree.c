@@ -4,9 +4,7 @@ VALUE cStree;
 
 static void dealloc(void *ptr)
 {
-  // FIXME: Strings don't seem to be duped when adding to the tree, so we
-  // need to figure out a tree free strategy.  We'll just leak for now.
-  //lst_stree_free((LST_STree *)ptr);
+  lst_stree_free((LST_STree *)ptr);
 }
 
 static VALUE allocate(VALUE klass)
