@@ -62,6 +62,28 @@ static VALUE delete(VALUE self, VALUE obj)
   return Qnil;
 }
 
+static void each_cb(LST_String * string, void * ctx)
+{
+  VALUE self = (VALUE)ctx;
+
+  VALUE weakrefs = rb_iv_get(self, "@weak_refs");
+  VALUE key = INT2NUM((int)string);
+  VALUE value = rb_hash_aref(weakrefs, key);
+  if(NIL_P(value))
+    rb_raise(rb_eRuntimeError, "fixme!");
+  else
+    rb_yield(value);
+}
+
+static VALUE each(VALUE self)
+{
+  LST_StringSet * ss;
+
+  Data_Get_Struct(self, LST_StringSet, ss);
+  lst_stringset_foreach(ss, each_cb, (void *)self);
+  return self;
+}
+
 void Init_stree_stringset()
 {
   cStreeStringSet = rb_define_class_under(cStree, "StringSet", rb_cObject);
@@ -71,4 +93,5 @@ void Init_stree_stringset()
   rb_define_method(cStreeStringSet, "length", length, 0);
   rb_define_method(cStreeStringSet, "push", push, 1);
   rb_define_method(cStreeStringSet, "delete", delete, 1);
+  rb_define_method(cStreeStringSet, "each", each, 0);
 }

@@ -36,5 +36,16 @@ class Stree
         @ss.delete Object.new
       end
     end
+
+    def test_each
+      foo = Stree::String.new('foo')
+      @ss << foo
+      list = []
+      @ss.each do |thing|
+        list << thing
+      end
+
+      assert_equal([foo], list)
+    end
   end
 end
