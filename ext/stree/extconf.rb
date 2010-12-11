@@ -33,18 +33,13 @@ LIB_DIRS = [
   '/usr/lib',
 ]
 
-stree_dirs = dir_config('stree', '/opt/local/include', '/opt/local/lib')
+dir_config('stree', HEADER_DIRS, LIB_DIRS)
 
-unless ["", ""] == stree_dirs
-  HEADER_DIRS.unshift stree_dirs.first
-  LIB_DIRS.unshift stree_dirs[1]
-end
-
-unless find_header('stree/lst_string.h', *HEADER_DIRS)
+unless find_header('stree/lst_string.h')
   abort "libstree is missing.  please install libstree"
 end
 
-unless find_library('stree', 'lst_stree_free', *LIB_DIRS)
+unless find_library('stree', 'lst_stree_free')
   abort "libstree is missing.  please install libstree"
 end
 
